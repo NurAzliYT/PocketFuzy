@@ -3,6 +3,6 @@ build-by-default: true
 branches:
 - apimap
 projects:
-  tests.plugins.TesterPlugin:
-    path: tests/plugins/TesterPlugin/
+  PocketFuzy:
+    path: pocketmine
 ...
