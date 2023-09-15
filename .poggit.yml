@@ -1,8 +1,0 @@
---- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/NurAzliYT/PocketFuzy
-build-by-default: true
-branches:
-- apimap
-projects:
-  PocketFuzy:
-    path: pocketmine
-...
