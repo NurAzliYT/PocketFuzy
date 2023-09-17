@@ -1,106 +1,87 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
-*/
-
 declare(strict_types=1);
 
 /**
- * PocketMine-MP is the Minecraft: PE multiplayer server software
- * Homepage: http://www.pocketmine.net/
+ * PocketFuzy is the Minecraft: PE multiplayer server software
+ * Homepage: http://www.PocketFuzy.net/
  */
-namespace pocketmine;
+namespace PocketFuzy;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandReader;
-use pocketmine\command\CommandSender;
-use pocketmine\command\ConsoleCommandSender;
-use pocketmine\command\SimpleCommandMap;
-use pocketmine\crafting\CraftingManager;
-use pocketmine\crafting\CraftingManagerFromDataHelper;
-use pocketmine\event\HandlerListManager;
-use pocketmine\event\player\PlayerCreationEvent;
-use pocketmine\event\player\PlayerDataSaveEvent;
-use pocketmine\event\server\CommandEvent;
-use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\event\server\QueryRegenerateEvent;
-use pocketmine\lang\Language;
-use pocketmine\lang\LanguageNotFoundException;
-use pocketmine\lang\TranslationContainer;
-use pocketmine\nbt\BigEndianNbtSerializer;
-use pocketmine\nbt\NbtDataException;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\TreeRoot;
-use pocketmine\network\mcpe\compression\CompressBatchPromise;
-use pocketmine\network\mcpe\compression\CompressBatchTask;
-use pocketmine\network\mcpe\compression\Compressor;
-use pocketmine\network\mcpe\compression\ZlibCompressor;
-use pocketmine\network\mcpe\encryption\EncryptionContext;
-use pocketmine\network\mcpe\NetworkSession;
-use pocketmine\network\mcpe\PacketBroadcaster;
-use pocketmine\network\mcpe\protocol\ClientboundPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
-use pocketmine\network\mcpe\raklib\RakLibInterface;
-use pocketmine\network\Network;
-use pocketmine\network\query\DedicatedQueryNetworkInterface;
-use pocketmine\network\query\QueryHandler;
-use pocketmine\network\query\QueryInfo;
-use pocketmine\network\upnp\UPnP;
-use pocketmine\permission\BanList;
-use pocketmine\permission\DefaultPermissions;
-use pocketmine\player\GameMode;
-use pocketmine\player\OfflinePlayer;
-use pocketmine\player\Player;
-use pocketmine\player\PlayerInfo;
-use pocketmine\plugin\ApiMap;
-use pocketmine\plugin\PharPluginLoader;
-use pocketmine\plugin\Plugin;
-use pocketmine\plugin\PluginEnableOrder;
-use pocketmine\plugin\PluginGraylist;
-use pocketmine\plugin\PluginManager;
-use pocketmine\plugin\PluginOwned;
-use pocketmine\plugin\ScriptPluginLoader;
-use pocketmine\resourcepacks\ResourcePackManager;
-use pocketmine\scheduler\AsyncPool;
-use pocketmine\snooze\SleeperHandler;
-use pocketmine\snooze\SleeperNotifier;
-use pocketmine\stats\SendUsageTask;
-use pocketmine\timings\Timings;
-use pocketmine\timings\TimingsHandler;
-use pocketmine\updater\AutoUpdater;
-use pocketmine\utils\Config;
-use pocketmine\utils\Filesystem;
-use pocketmine\utils\Internet;
-use pocketmine\utils\MainLogger;
-use pocketmine\utils\Process;
-use pocketmine\utils\Terminal;
-use pocketmine\utils\TextFormat;
-use pocketmine\utils\Utils;
-use pocketmine\uuid\UUID;
-use pocketmine\world\format\io\WorldProviderManager;
-use pocketmine\world\format\io\WritableWorldProvider;
-use pocketmine\world\generator\Generator;
-use pocketmine\world\generator\GeneratorManager;
-use pocketmine\world\generator\normal\Normal;
-use pocketmine\world\World;
-use pocketmine\world\WorldManager;
+use PocketFuzy\command\Command;
+use PocketFuzy\command\CommandReader;
+use PocketFuzy\command\CommandSender;
+use PocketFuzy\command\ConsoleCommandSender;
+use PocketFuzy\command\SimpleCommandMap;
+use PocketFuzy\crafting\CraftingManager;
+use PocketFuzy\crafting\CraftingManagerFromDataHelper;
+use PocketFuzy\event\HandlerListManager;
+use PocketFuzy\event\player\PlayerCreationEvent;
+use PocketFuzy\event\player\PlayerDataSaveEvent;
+use PocketFuzy\event\server\CommandEvent;
+use PocketFuzy\event\server\DataPacketSendEvent;
+use PocketFuzy\event\server\QueryRegenerateEvent;
+use PocketFuzy\lang\Language;
+use PocketFuzy\lang\LanguageNotFoundException;
+use PocketFuzy\lang\TranslationContainer;
+use PocketFuzy\nbt\BigEndianNbtSerializer;
+use PocketFuzy\nbt\NbtDataException;
+use PocketFuzy\nbt\tag\CompoundTag;
+use PocketFuzy\nbt\TreeRoot;
+use PocketFuzy\network\mcpe\compression\CompressBatchPromise;
+use PocketFuzy\network\mcpe\compression\CompressBatchTask;
+use PocketFuzy\network\mcpe\compression\Compressor;
+use PocketFuzy\network\mcpe\compression\ZlibCompressor;
+use PocketFuzy\network\mcpe\encryption\EncryptionContext;
+use PocketFuzy\network\mcpe\NetworkSession;
+use PocketFuzy\network\mcpe\PacketBroadcaster;
+use PocketFuzy\network\mcpe\protocol\ClientboundPacket;
+use PocketFuzy\network\mcpe\protocol\ProtocolInfo;
+use PocketFuzy\network\mcpe\protocol\serializer\PacketBatch;
+use PocketFuzy\network\mcpe\raklib\RakLibInterface;
+use PocketFuzy\network\Network;
+use PocketFuzy\network\query\DedicatedQueryNetworkInterface;
+use PocketFuzy\network\query\QueryHandler;
+use PocketFuzy\network\query\QueryInfo;
+use PocketFuzy\network\upnp\UPnP;
+use PocketFuzy\permission\BanList;
+use PocketFuzy\permission\DefaultPermissions;
+use PocketFuzy\player\GameMode;
+use PocketFuzy\player\OfflinePlayer;
+use PocketFuzy\player\Player;
+use PocketFuzy\player\PlayerInfo;
+use PocketFuzy\plugin\ApiMap;
+use PocketFuzy\plugin\PharPluginLoader;
+use PocketFuzy\plugin\Plugin;
+use PocketFuzy\plugin\PluginEnableOrder;
+use PocketFuzy\plugin\PluginGraylist;
+use PocketFuzy\plugin\PluginManager;
+use PocketFuzy\plugin\PluginOwned;
+use PocketFuzy\plugin\ScriptPluginLoader;
+use PocketFuzy\resourcepacks\ResourcePackManager;
+use PocketFuzy\scheduler\AsyncPool;
+use PocketFuzy\snooze\SleeperHandler;
+use PocketFuzy\snooze\SleeperNotifier;
+use PocketFuzy\stats\SendUsageTask;
+use PocketFuzy\timings\Timings;
+use PocketFuzy\timings\TimingsHandler;
+use PocketFuzy\updater\AutoUpdater;
+use PocketFuzy\utils\Config;
+use PocketFuzy\utils\Filesystem;
+use PocketFuzy\utils\Internet;
+use PocketFuzy\utils\MainLogger;
+use PocketFuzy\utils\Process;
+use PocketFuzy\utils\Terminal;
+use PocketFuzy\utils\TextFormat;
+use PocketFuzy\utils\Utils;
+use PocketFuzy\uuid\UUID;
+use PocketFuzy\world\format\io\WorldProviderManager;
+use PocketFuzy\world\format\io\WritableWorldProvider;
+use PocketFuzy\world\generator\Generator;
+use PocketFuzy\world\generator\GeneratorManager;
+use PocketFuzy\world\generator\normal\Normal;
+use PocketFuzy\world\World;
+use PocketFuzy\world\WorldManager;
 use function array_shift;
 use function array_sum;
 use function base64_encode;
@@ -154,8 +135,8 @@ use const ZLIB_ENCODING_GZIP;
  * The class that manages everything
  */
 class Server{
-	public const BROADCAST_CHANNEL_ADMINISTRATIVE = "pocketmine.broadcast.admin";
-	public const BROADCAST_CHANNEL_USERS = "pocketmine.broadcast.user";
+	public const BROADCAST_CHANNEL_ADMINISTRATIVE = "PocketFuzy.broadcast.admin";
+	public const BROADCAST_CHANNEL_USERS = "PocketFuzy.broadcast.user";
 
 	/** @var Server|null */
 	private static $instance = null;
@@ -297,7 +278,7 @@ class Server{
 		return $this->isRunning;
 	}
 
-	public function getPocketMineVersion() : string{
+	public function getPocketFuzyVersion() : string{
 		return VersionInfo::getVersionObj()->getFullVersion(true);
 	}
 
@@ -310,11 +291,11 @@ class Server{
 	}
 
 	public function getFilePath() : string{
-		return \pocketmine\PATH;
+		return \PocketFuzy\PATH;
 	}
 
 	public function getResourcePath() : string{
-		return \pocketmine\RESOURCE_PATH;
+		return \PocketFuzy\RESOURCE_PATH;
 	}
 
 	public function getDataPath() : string{
@@ -441,7 +422,7 @@ class Server{
 	 *
 	 * The $interface is used to identify various API types,
 	 * and users should not try to provide APIs for two $interfaces that extend one another.
-	 * For example, PocketMine can provide a default BanList interface provides an interface to track user bans,
+	 * For example, PocketFuzy can provide a default BanList interface provides an interface to track user bans,
 	 * which calls `provideApi(BanList::class)`, but it does not call `provideApi(DefaultBanList::class)`.
 	 * Nevertheless, if alternative implementations are not intended,
 	 * it is fine to provide $interface as the final class.
@@ -601,7 +582,7 @@ class Server{
 	private function handleCorruptedPlayerData(string $name) : void{
 		$path = $this->getPlayerDataPath($name);
 		rename($path, $path . '.bak');
-		$this->logger->error($this->getLanguage()->translateString("pocketmine.data.playerCorrupted", [$name]));
+		$this->logger->error($this->getLanguage()->translateString("PocketFuzy.data.playerCorrupted", [$name]));
 	}
 
 	public function getOfflinePlayerData(string $name) : ?CompoundTag{
@@ -647,7 +628,7 @@ class Server{
 				try{
 					file_put_contents($this->getPlayerDataPath($name), zlib_encode($nbt->write(new TreeRoot($ev->getSaveData())), ZLIB_ENCODING_GZIP));
 				}catch(\ErrorException $e){
-					$this->logger->critical($this->getLanguage()->translateString("pocketmine.data.saveError", [$name, $e->getMessage()]));
+					$this->logger->critical($this->getLanguage()->translateString("PocketFuzy.data.saveError", [$name, $e->getMessage()]));
 					$this->logger->logException($e);
 				}
 			});
@@ -858,16 +839,16 @@ class Server{
 			$this->pluginPath = realpath($pluginPath) . DIRECTORY_SEPARATOR;
 
 			$this->logger->info("Loading server configuration");
-			if(!file_exists($this->dataPath . "pocketmine.yml")){
-				$content = file_get_contents(\pocketmine\RESOURCE_PATH . "pocketmine.yml");
+			if(!file_exists($this->dataPath . "PocketFuzy.yml")){
+				$content = file_get_contents(\PocketFuzy\RESOURCE_PATH . "PocketFuzy.yml");
 				if(VersionInfo::IS_DEVELOPMENT_BUILD){
 					$content = str_replace("preferred-channel: stable", "preferred-channel: beta", $content);
 				}
-				@file_put_contents($this->dataPath . "pocketmine.yml", $content);
+				@file_put_contents($this->dataPath . "PocketFuzy.yml", $content);
 			}
 
 			$this->configGroup = new ServerConfigGroup(
-				new Config($this->dataPath . "pocketmine.yml", Config::YAML, []),
+				new Config($this->dataPath . "PocketFuzy.yml", Config::YAML, []),
 				new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
 					"motd" => VersionInfo::NAME . " Server",
 					"server-port" => 19132,
@@ -913,26 +894,26 @@ class Server{
 
 			if(VersionInfo::IS_DEVELOPMENT_BUILD){
 				if(!((bool) $this->configGroup->getProperty("settings.enable-dev-builds", false))){
-					$this->logger->emergency($this->language->translateString("pocketmine.server.devBuild.error1", [VersionInfo::NAME]));
-					$this->logger->emergency($this->language->translateString("pocketmine.server.devBuild.error2"));
-					$this->logger->emergency($this->language->translateString("pocketmine.server.devBuild.error3"));
-					$this->logger->emergency($this->language->translateString("pocketmine.server.devBuild.error4", ["settings.enable-dev-builds"]));
-					$this->logger->emergency($this->language->translateString("pocketmine.server.devBuild.error5", ["https://github.com/pmmp/PocketMine-MP/releases"]));
+					$this->logger->emergency($this->language->translateString("PocketFuzy.server.devBuild.error1", [VersionInfo::NAME]));
+					$this->logger->emergency($this->language->translateString("PocketFuzy.server.devBuild.error2"));
+					$this->logger->emergency($this->language->translateString("PocketFuzy.server.devBuild.error3"));
+					$this->logger->emergency($this->language->translateString("PocketFuzy.server.devBuild.error4", ["settings.enable-dev-builds"]));
+					$this->logger->emergency($this->language->translateString("PocketFuzy.server.devBuild.error5", ["https://github.com/pmmp/PocketFuzy/releases"]));
 					$this->forceShutdown();
 
 					return;
 				}
 
 				$this->logger->warning(str_repeat("-", 40));
-				$this->logger->warning($this->language->translateString("pocketmine.server.devBuild.warning1", [VersionInfo::NAME]));
-				$this->logger->warning($this->language->translateString("pocketmine.server.devBuild.warning2"));
-				$this->logger->warning($this->language->translateString("pocketmine.server.devBuild.warning3"));
+				$this->logger->warning($this->language->translateString("PocketFuzy.server.devBuild.warning1", [VersionInfo::NAME]));
+				$this->logger->warning($this->language->translateString("PocketFuzy.server.devBuild.warning2"));
+				$this->logger->warning($this->language->translateString("PocketFuzy.server.devBuild.warning3"));
 				$this->logger->warning(str_repeat("-", 40));
 			}
 
 			$this->memoryManager = new MemoryManager($this);
 
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.start", [TextFormat::AQUA . $this->getVersion() . TextFormat::RESET]));
+			$this->logger->info($this->getLanguage()->translateString("PocketFuzy.server.start", [TextFormat::AQUA . $this->getVersion() . TextFormat::RESET]));
 
 			if(($poolSize = $this->configGroup->getProperty("settings.async-workers", "auto")) === "auto"){
 				$poolSize = 2;
@@ -981,19 +962,19 @@ class Server{
 
 			$this->onlineMode = $this->configGroup->getConfigBool("xbox-auth", true);
 			if($this->onlineMode){
-				$this->logger->notice($this->getLanguage()->translateString("pocketmine.server.auth.enabled"));
-				$this->logger->notice($this->getLanguage()->translateString("pocketmine.server.authProperty.enabled"));
+				$this->logger->notice($this->getLanguage()->translateString("PocketFuzy.server.auth.enabled"));
+				$this->logger->notice($this->getLanguage()->translateString("PocketFuzy.server.authProperty.enabled"));
 			}else{
-				$this->logger->warning($this->getLanguage()->translateString("pocketmine.server.auth.disabled"));
-				$this->logger->warning($this->getLanguage()->translateString("pocketmine.server.authWarning"));
-				$this->logger->warning($this->getLanguage()->translateString("pocketmine.server.authProperty.disabled"));
+				$this->logger->warning($this->getLanguage()->translateString("PocketFuzy.server.auth.disabled"));
+				$this->logger->warning($this->getLanguage()->translateString("PocketFuzy.server.authWarning"));
+				$this->logger->warning($this->getLanguage()->translateString("PocketFuzy.server.authProperty.disabled"));
 			}
 
 			if($this->configGroup->getConfigBool("hardcore", false) and $this->getDifficulty() < World::DIFFICULTY_HARD){
 				$this->configGroup->setConfigInt("difficulty", World::DIFFICULTY_HARD);
 			}
 
-			@cli_set_process_title($this->getName() . " " . $this->getPocketMineVersion());
+			@cli_set_process_title($this->getName() . " " . $this->getPocketFuzyVersion());
 
 			$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
 
@@ -1003,11 +984,11 @@ class Server{
 			$this->network = new Network($this->logger);
 			$this->network->setName($this->getMotd());
 
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.info", [
+			$this->logger->info($this->getLanguage()->translateString("PocketFuzy.server.info", [
 				$this->getName(),
-				(VersionInfo::IS_DEVELOPMENT_BUILD ? TextFormat::YELLOW : "") . $this->getPocketMineVersion() . TextFormat::RESET
+				(VersionInfo::IS_DEVELOPMENT_BUILD ? TextFormat::YELLOW : "") . $this->getPocketFuzyVersion() . TextFormat::RESET
 			]));
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.license", [$this->getName()]));
+			$this->logger->info($this->getLanguage()->translateString("PocketFuzy.server.license", [$this->getName()]));
 
 			Timings::init();
 			TimingsHandler::setEnabled((bool) $this->configGroup->getProperty("settings.enable-profiling", false));
@@ -1017,14 +998,14 @@ class Server{
 
 			$this->commandMap = new SimpleCommandMap($this);
 
-			$this->craftingManager = CraftingManagerFromDataHelper::make(\pocketmine\RESOURCE_PATH . '/vanilla/recipes.json');
+			$this->craftingManager = CraftingManagerFromDataHelper::make(\PocketFuzy\RESOURCE_PATH . '/vanilla/recipes.json');
 
 			$this->resourceManager = new ResourcePackManager($this->getDataPath() . "resource_packs" . DIRECTORY_SEPARATOR, $this->logger);
 
 			$pluginGraylist = null;
 			$graylistFile = $this->dataPath . "plugin_list.yml";
 			if(!file_exists($graylistFile)){
-				copy(\pocketmine\RESOURCE_PATH . 'plugin_list.yml', $graylistFile);
+				copy(\PocketFuzy\RESOURCE_PATH . 'plugin_list.yml', $graylistFile);
 			}
 			try{
 				$pluginGraylist = PluginGraylist::fromArray(yaml_parse(file_get_contents($graylistFile)));
@@ -1046,7 +1027,7 @@ class Server{
 			){
 				$providerManager->setDefault($format);
 			}elseif($formatName !== ""){
-				$this->logger->warning($this->language->translateString("pocketmine.level.badDefaultFormat", [$formatName]));
+				$this->logger->warning($this->language->translateString("PocketFuzy.level.badDefaultFormat", [$formatName]));
 			}
 
 			$this->worldManager = new WorldManager($this, $this->dataPath . "/worlds", $providerManager);
@@ -1101,7 +1082,7 @@ class Server{
 
 				$world = $this->worldManager->getWorldByName($default);
 				if($world === null){
-					$this->getLogger()->emergency($this->getLanguage()->translateString("pocketmine.level.defaultError"));
+					$this->getLogger()->emergency($this->getLanguage()->translateString("PocketFuzy.level.defaultError"));
 					$this->forceShutdown();
 
 					return;
@@ -1117,7 +1098,7 @@ class Server{
 				//if it's not registered we need to make sure Query still works
 				$this->network->registerInterface(new DedicatedQueryNetworkInterface($this->getIp(), $this->getPort(), new \PrefixedLogger($this->logger, "Dedicated Query Interface")));
 			}
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [$this->getIp(), $this->getPort()]));
+			$this->logger->info($this->getLanguage()->translateString("PocketFuzy.server.networkStart", [$this->getIp(), $this->getPort()]));
 
 			if($useQuery){
 				$this->network->registerRawPacketHandler(new QueryHandler($this));
@@ -1142,9 +1123,9 @@ class Server{
 
 			$this->configGroup->save();
 
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.defaultGameMode", [$this->getGamemode()->getTranslationKey()]));
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.donate", [TextFormat::AQUA . "https://patreon.com/pocketminemp" . TextFormat::RESET]));
-			$this->logger->info($this->getLanguage()->translateString("pocketmine.server.startFinished", [round(microtime(true) - $this->startTime, 3)]));
+			$this->logger->info($this->getLanguage()->translateString("PocketFuzy.server.defaultGameMode", [$this->getGamemode()->getTranslationKey()]));
+			$this->logger->info($this->getLanguage()->translateString("PocketFuzy.server.donate", [TextFormat::AQUA . "https://patreon.com/PocketFuzymp" . TextFormat::RESET]));
+			$this->logger->info($this->getLanguage()->translateString("PocketFuzy.server.startFinished", [round(microtime(true) - $this->startTime, 3)]));
 
 			//TODO: move console parts to a separate component
 			$consoleSender = new ConsoleCommandSender($this, $this->language);
@@ -1519,10 +1500,10 @@ class Server{
 		ini_set("error_reporting", '0');
 		ini_set("memory_limit", '-1'); //Fix error dump not dumped on memory problems
 		try{
-			$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.create"));
+			$this->logger->emergency($this->getLanguage()->translateString("PocketFuzy.crash.create"));
 			$dump = new CrashDump($this);
 
-			$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.submit", [$dump->getPath()]));
+			$this->logger->emergency($this->getLanguage()->translateString("PocketFuzy.crash.submit", [$dump->getPath()]));
 
 			if($this->configGroup->getProperty("auto-report.enabled", true) !== false){
 				$report = true;
@@ -1557,8 +1538,8 @@ class Server{
 					$postUrlError = "Unknown error";
 					$reply = Internet::postURL($url, [
 						"report" => "yes",
-						"name" => $this->getName() . " " . $this->getPocketMineVersion(),
-						"email" => "crash@pocketmine.net",
+						"name" => $this->getName() . " " . $this->getPocketFuzyVersion(),
+						"email" => "crash@PocketFuzy.net",
 						"reportPaste" => base64_encode($dump->getEncodedData())
 					], 10, [], $postUrlError);
 
@@ -1566,7 +1547,7 @@ class Server{
 						if(isset($data->crashId) and isset($data->crashUrl)){
 							$reportId = $data->crashId;
 							$reportUrl = $data->crashUrl;
-							$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.archive", [$reportUrl, $reportId]));
+							$this->logger->emergency($this->getLanguage()->translateString("PocketFuzy.crash.archive", [$reportUrl, $reportId]));
 						}elseif(isset($data->error)){
 							$this->logger->emergency("Automatic crash report submission failed: $data->error");
 						}
@@ -1578,7 +1559,7 @@ class Server{
 		}catch(\Throwable $e){
 			$this->logger->logException($e);
 			try{
-				$this->logger->critical($this->getLanguage()->translateString("pocketmine.crash.error", [$e->getMessage()]));
+				$this->logger->critical($this->getLanguage()->translateString("PocketFuzy.crash.error", [$e->getMessage()]));
 			}catch(\Throwable $e){}
 		}
 
@@ -1682,7 +1663,7 @@ class Server{
 		$bandwidthStats = $this->network->getBandwidthTracker();
 
 		echo "\x1b]0;" . $this->getName() . " " .
-			$this->getPocketMineVersion() .
+			$this->getPocketFuzyVersion() .
 			" | Online $online/" . $this->getMaxPlayers() .
 			($connecting > 0 ? " (+$connecting connecting)" : "") .
 			" | Memory " . $usage .
@@ -1747,7 +1728,7 @@ class Server{
 			}
 
 			if($this->getTicksPerSecondAverage() < 12){
-				$this->logger->warning($this->getLanguage()->translateString("pocketmine.server.tickOverload"));
+				$this->logger->warning($this->getLanguage()->translateString("PocketFuzy.server.tickOverload"));
 			}
 		}
 
