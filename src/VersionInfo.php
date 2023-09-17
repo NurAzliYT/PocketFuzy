@@ -26,7 +26,7 @@ final class VersionInfo{
 			$gitHash = str_repeat("00", 20);
 
 			if(\Phar::running(true) === ""){
-				$gitHash = Git::getRepositoryStatePretty(\pocketmine\PATH);
+				$gitHash = Git::getRepositoryStatePretty(\PocketFuzy\PATH);
 			}else{
 				$phar = new \Phar(\Phar::running(false));
 				$meta = $phar->getMetadata();
