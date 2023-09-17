@@ -1,38 +1,19 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
-*/
-
 declare(strict_types=1);
 
-namespace pocketmine {
+namespace PocketFuzy {
 
 	use Composer\InstalledVersions;
-	use pocketmine\errorhandler\ErrorToExceptionHandler;
-	use pocketmine\thread\ThreadManager;
-	use pocketmine\utils\Filesystem;
-	use pocketmine\utils\MainLogger;
-	use pocketmine\utils\Process;
-	use pocketmine\utils\ServerKiller;
-	use pocketmine\utils\Terminal;
-	use pocketmine\utils\Timezone;
-	use pocketmine\wizard\SetupWizard;
+	use PocketFuzy\errorhandler\ErrorToExceptionHandler;
+	use PocketFuzy\thread\ThreadManager;
+	use PocketFuzy\utils\Filesystem;
+	use PocketFuzy\utils\MainLogger;
+	use PocketFuzy\utils\Process;
+	use PocketFuzy\utils\ServerKiller;
+	use PocketFuzy\utils\Terminal;
+	use PocketFuzy\utils\Timezone;
+	use PocketFuzy\wizard\SetupWizard;
 
 	require_once __DIR__ . '/VersionInfo.php';
 
@@ -187,10 +168,10 @@ namespace pocketmine {
 			critical_error("Please install/update Composer dependencies or use provided builds.");
 			exit(1);
 		}
-		define('pocketmine\COMPOSER_AUTOLOADER_PATH', $bootstrap);
-		require_once(\pocketmine\COMPOSER_AUTOLOADER_PATH);
+		define('PocketFuzy\COMPOSER_AUTOLOADER_PATH', $bootstrap);
+		require_once(\PocketFuzy\COMPOSER_AUTOLOADER_PATH);
 
-		$composerGitHash = InstalledVersions::getReference('pocketmine/pocketmine-mp');
+		$composerGitHash = InstalledVersions::getReference('PocketFuzy/pocketmine-mp');
 		if($composerGitHash !== null){
 			//we can't verify dependency versions if we were installed without using git
 			$currentGitHash = explode("-", VersionInfo::getGitHash())[0];
