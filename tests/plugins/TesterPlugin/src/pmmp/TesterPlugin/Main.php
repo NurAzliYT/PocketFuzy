@@ -1,104 +1,145 @@
 <?php
-
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- *
- *
-*/
-
 declare(strict_types=1);
 
 namespace pmmp\TesterPlugin;
 
-use pocketmine\event\Listener;
-use pocketmine\event\server\CommandEvent;
+use pocketmine\Server;
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
-use function array_shift;
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
+use pocketmine\event\Listener;
+
+use jojoe77777\FormAPI\SimpleForm;
 
 class Main extends PluginBase implements Listener{
-
-	/** @var Test[] */
-	protected $waitingTests = [];
-	/** @var Test|null */
-	protected $currentTest = null;
-	/** @var Test[] */
-	protected $completedTests = [];
-	/** @var int */
-	protected $currentTestNumber = 0;
-
-	public function onEnable() : void{
-		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-		$this->getScheduler()->scheduleRepeatingTask(new CheckTestCompletionTask($this), 10);
-
-		$this->waitingTests = [];
-	}
-
-	public function onServerCommand(CommandEvent $event) : void{
-		//The CI will send this command as a failsafe to prevent the build from hanging if the tester plugin failed to
-		//run. However, if the plugin loaded successfully we don't want to allow this to stop the server as there may
-		//be asynchronous tests running. Instead we cancel this and stop the server of our own accord once all tests
-		//have completed.
-		if($event->getCommand() === "stop"){
-			$event->cancel();
-		}
-	}
-
-	public function getCurrentTest() : ?Test{
-		return $this->currentTest;
-	}
-
-	public function startNextTest() : bool{
-		$this->currentTest = array_shift($this->waitingTests);
-		if($this->currentTest !== null){
-			$this->getLogger()->notice("Running test #" . (++$this->currentTestNumber) . " (" . $this->currentTest->getName() . ")");
-			$this->currentTest->start();
-			return true;
-		}
-
-		return false;
-	}
-
-	public function onTestCompleted(Test $test) : void{
-		$message = "Finished test #" . $this->currentTestNumber . " (" . $test->getName() . "): ";
-		switch($test->getResult()){
-			case Test::RESULT_OK:
-				$message .= "PASS";
-				break;
-			case Test::RESULT_FAILED:
-				$message .= "FAIL";
-				break;
-			case Test::RESULT_ERROR:
-				$message .= "ERROR";
-				break;
-			case Test::RESULT_WAITING:
-				$message .= "TIMEOUT";
-				break;
-			default:
-				$message .= "UNKNOWN";
-				break;
-		}
-
-		$this->getLogger()->notice($message);
-
-		$this->completedTests[$this->currentTestNumber] = $test;
-		$this->currentTest = null;
-	}
-
-	public function onAllTestsCompleted() : void{
-		$this->getLogger()->notice("All tests finished, stopping the server");
-		$this->getServer()->shutdown();
-	}
+    
+    public function onEnable() : void
+    {
+        $this->getServer()->getPluginManager()->registerEvents($this, $this);
+        
+        @mkdir($this->getDataFolder());
+       $this->saveDefaultConfig();
+       $this->saveResource("config.yml");
+       
+    }
+    
+    public function onCommand(CommandSender $sender, Command $cmd, String $label, Array $args) : bool {
+        
+        if($cmd->getName() == "info"){
+            $this->InfoUI($sender);
+        }
+        
+        return true;
+    }
+    
+    public function InfoUI($player){
+        $form = new SimpleForm(function(Player $player, int $data = null){
+        $result = $data;
+        if($result === null){
+            return true;
+            }
+            switch($result){
+                case 0:
+                    $this->About($player);
+                break;
+                
+                case 1:
+                    $this->Rules($player);
+                break;
+                
+                case 2:
+                    $this->Staff($player);
+                break;
+                
+                case 3:
+                    $this->Update($player);
+                break;
+                
+                case 4:
+                    
+                break;
+            }
+        });
+        $form->setTitle($this->getConfig()->get("InfoUI-Title"));
+        $form->addButton($this->getConfig()->get("About-Button"), 0, "textures/ui/icon_book_writable");
+        $form->addButton($this->getConfig()->get("Rules-Button"), 0, "textures/ui/recipe_book_icon");
+        $form->addButton($this->getConfig()->get("Staff-Button"), 0, "textures/ui/icon_best3");
+        $form->addButton($this->getConfig()->get("Update-Button"), 0, "textures/ui/mashup_world");
+        $form->addButton($this->getConfig()->get("Exit-Button"), 0, "textures/ui/icon_import");
+        $form->sendToPlayer($player);
+    }
+    
+    public function About($player){
+        $form = new SimpleForm(function(Player $player, int $data = null){
+        $result = $data;
+        if($data === null){
+            return true;
+            }
+            switch($result){
+                case 0:
+                    $this->InfoUI($player);
+                break;
+            }
+        });
+        $form->setTitle($this->getConfig()->get("About-Title"));
+        $form->setContent($this->getConfig()->get("About-Text"));
+        $form->addButton($this->getConfig()->get("Back-Button"), 0, "textures/ui/refresh_light");
+        $form->sendToPlayer($player);
+    }
+    
+    public function Rules($player){
+        $form = new SimpleForm(function(Player $player, int $data = null){
+        $result = $data;
+        if($result === null){
+            return true;
+            }
+            switch($result){
+                case 0:
+                    $this->InfoUI($player);
+                break;
+            }
+        });
+        $form->setTitle($this->getConfig()->get("Rules-Title"));
+        $form->setContent($this->getConfig()->get("Rules-Text"));
+        $form->addButton($this->getConfig()->get("Back-Button"), 0, "textures/ui/refresh_light");
+        $form->sendToPlayer($player);
+    }
+    
+    public function Staff($player){
+        $form = new SimpleForm(function(Player $player, int $data = null){
+        $result = $data;
+        if($result === null){
+            return true;
+            }
+            switch($result){
+                case 0:
+                    $this->InfoUI($player);
+                break;
+            }
+        });
+        $form->setTitle($this->getConfig()->get("Staff-Title"));
+        $form->setContent($this->getConfig()->get("Staff-Text"));
+        $form->addButton($this->getConfig()->get("Back-Button"), 0, "textures/ui/refresh_light");
+        $form->sendToPlayer($player);
+    }
+    
+    public function Update($player){
+        $form = new SimpleForm(function(Player $player, int $data = null){
+        $result = $data;
+        if($result === null){
+            return true;
+            }
+            switch($result){
+                case 0:
+                    $this->InfoUI($player);
+                break;
+            }
+        });
+        # Form Set For Info
+        $form->setTitle($this->getConfig()->get("Update-Title"));
+        $form->setContent($this->getConfig()->get("Update-Text"));
+        $form->addButton($this->getConfig()->get("Back-Button"), 0, "textures/ui/refresh_light");
+        $form->sendToPlayer($player);
+    }
 }
